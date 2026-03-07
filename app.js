@@ -12,6 +12,10 @@ app.use(methodOverride("_method"));
 const allRoutes = require("./routes/allRoutes");
 const addUserRoute = require("./routes/addUser");
 
+// codes cookie-parser .. that get cookies from my website
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
+
 // Auto refresh
 const path = require("path");
 const livereload = require("livereload");

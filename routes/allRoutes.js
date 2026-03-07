@@ -3,10 +3,18 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const AuthUser = require("../models/authUser")
 const bcrypt = require('bcrypt');
+var jwt = require("jsonwebtoken");
+var requireAuth = require("../middleware/middleware")
+
+
+
+
+
 
 
 // Level 2
-router.get("/",  (req, res) => {
+router.get("/", (req, res) => {
+    console.log("hiiiiiiiiiiiiiiii");
 res.render("welcome")
 
 });
@@ -36,9 +44,9 @@ res.redirect("/")
 
 });
 
-// check if email correct Or No
+//"just verification"  check if email correct Or No
 router.post("/login", async (req, res) => {
- console.log("7777777777777777777777777");
+ console.log("88888888888888888");
 const logInUser = await AuthUser.findOne({email: req.body.email})
  console.log(logInUser);
 
@@ -49,11 +57,15 @@ if (logInUser === null) {
     const match = await bcrypt.compare(req.body.password, logInUser.password)
     if (match) {
         console.log("correct Email & Password");
+        var token = jwt.sign({ id: logInUser._id }, "c4a.dev");
+        res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
+        res.redirect("/home")
+
     }else{
         console.log("wrong password");
     }
 
-    res.redirect("/signup")
+   
     
 }
 
@@ -71,11 +83,11 @@ if (logInUser === null) {
 // Level 1
 // GET Requst
 
-router.get("/home", userController.user_index_get);
+router.get("/home",requireAuth, userController.user_index_get);
 
-router.get("/edit/:id", userController.user_edit_get);
+router.get("/edit/:id",requireAuth,  userController.user_edit_get);
 
-router.get("/view/:id", userController.user_view_get);
+router.get("/view/:id",requireAuth,  userController.user_view_get);
 
 router.post("/search", userController.user_search_post);
 
