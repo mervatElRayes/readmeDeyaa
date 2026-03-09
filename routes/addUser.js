@@ -10,3 +10,9 @@ router.get("",requireAuth, userController.user_add_get);
 router.post("", userController.user_post);
 
 module.exports = router;
+
+
+
+
+
+
