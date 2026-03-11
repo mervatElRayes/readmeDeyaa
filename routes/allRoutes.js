@@ -1,93 +1,95 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const AuthUser = require("../models/authUser")
-const bcrypt = require('bcrypt');
+const AuthUser = require("../models/authUser");
+const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
-var requireAuth = require("../middleware/middleware")
+var requireAuth = require("../middleware/middleware");
+// const { route } = require("express/lib/application");
+
+const checkIfUser = (req, res, next) => {
+  res.locals.www = "ali hassan";
+  const token = req.cookies.jwt;
+  if (token) {
+    //  login user
+    jwt.verify(token, "c4a.dev", async (err, decoded) => {
+      if (err) {
+        res.locals.user = null;
+        next();
+      } else {
+        const loginUser = await AuthUser.findById(decoded.id);
+
+        res.locals.user = loginUser;
+        next();
+      }
+    });
+  } else {
+    // not login user
+    res.locals.user = null;
+    next();
+  }
+};
 
 
-
-
+router.get("*", checkIfUser)
 
 
 
 // Level 2
 router.get("/", (req, res) => {
-    console.log("hiiiiiiiiiiiiiiii");
-res.render("welcome")
-
+  console.log("hiiiiiiiiiiiiiiii");
+  res.render("welcome");
 });
 
-router.get("/login",  (req, res) => {
-res.render("auth/login")
-
+router.get("/login", (req, res) => {
+  res.render("auth/login");
 });
 
-
-router.get("/signup",  (req, res) => {
-res.render("auth/signup")
-
+router.get("/signup", (req, res) => {
+  res.render("auth/signup");
 });
-
 
 router.post("/signup", async (req, res) => {
-    console.log(req.body);
+  console.log(req.body);
 
-try {
-    const result = await AuthUser.create(req.body)
-console.log(result);
-res.redirect("/")
-} catch (error) {
+  try {
+    const result = await AuthUser.create(req.body);
+    console.log(result);
+    res.redirect("/");
+  } catch (error) {
     console.log(error);
-}
-
+  }
 });
 
 //"just verification"  check if email correct Or No
 router.post("/login", async (req, res) => {
- console.log("88888888888888888");
-const logInUser = await AuthUser.findOne({email: req.body.email})
- console.log(logInUser);
+  console.log("88888888888888888");
+  const logInUser = await AuthUser.findOne({ email: req.body.email });
+  console.log(logInUser);
 
-if (logInUser === null) {
+  if (logInUser === null) {
     console.log("This email not Found In DB");
-    
-}else{
-    const match = await bcrypt.compare(req.body.password, logInUser.password)
+  } else {
+    const match = await bcrypt.compare(req.body.password, logInUser.password);
     if (match) {
-        console.log("correct Email & Password");
-        var token = jwt.sign({ id: logInUser._id }, "c4a.dev");
-        res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
-        res.redirect("/home")
-
-    }else{
-        console.log("wrong password");
+      console.log("correct Email & Password");
+      var token = jwt.sign({ id: logInUser._id }, "c4a.dev");
+      res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
+      res.redirect("/home");
+    } else {
+      console.log("wrong password");
     }
-
-   
-    
-}
-
-
-
+  }
 });
-
-
-
-
-
-
-
 
 // Level 1
 // GET Requst
 
-router.get("/home",requireAuth, userController.user_index_get);
+router.get("/home", requireAuth, userController.user_index_get);
 
-router.get("/edit/:id",requireAuth,  userController.user_edit_get);
+router.get("/edit/:id", requireAuth, userController.user_edit_get);
 
-router.get("/view/:id",requireAuth,  userController.user_view_get);
+router.get("/view/:id", requireAuth, userController.user_view_get);
 
 router.post("/search", userController.user_search_post);
 
