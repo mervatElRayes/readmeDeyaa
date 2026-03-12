@@ -13,6 +13,8 @@ const user_index_get = (req, res) => {
     });
 };
 
+
+
 const user_edit_get = (req, res) => {
   User.findById(req.params.id)
     .then((result) => {

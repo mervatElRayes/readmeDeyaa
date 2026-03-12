@@ -4,31 +4,11 @@ const userController = require("../controllers/userController");
 const AuthUser = require("../models/authUser");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
-var requireAuth = require("../middleware/middleware");
-// const { route } = require("express/lib/application");
+var {requireAuth, checkIfUser} = require("../middleware/middleware");
 
-const checkIfUser = (req, res, next) => {
-  res.locals.www = "ali hassan";
-  const token = req.cookies.jwt;
-  if (token) {
-    //  login user
-    jwt.verify(token, "c4a.dev", async (err, decoded) => {
-      if (err) {
-        res.locals.user = null;
-        next();
-      } else {
-        const loginUser = await AuthUser.findById(decoded.id);
 
-        res.locals.user = loginUser;
-        next();
-      }
-    });
-  } else {
-    // not login user
-    res.locals.user = null;
-    next();
-  }
-};
+
+/////////////////////////////
 
 
 router.get("*", checkIfUser)
@@ -36,10 +16,19 @@ router.get("*", checkIfUser)
 
 
 // Level 2
+router.get("/signout", (req, res) => {
+     
+ res.cookie("jwt", "", {maxAge: 1 });
+res.redirect("/")
+
+});
+
+
 router.get("/", (req, res) => {
   console.log("hiiiiiiiiiiiiiiii");
   res.render("welcome");
 });
+
 
 router.get("/login", (req, res) => {
   res.render("auth/login");
