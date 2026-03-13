@@ -8,7 +8,7 @@ var {requireAuth, checkIfUser} = require("../middleware/middleware");
 
 
 
-/////////////////////////////
+
 
 
 router.get("*", checkIfUser)
@@ -42,12 +42,23 @@ router.post("/signup", async (req, res) => {
   console.log(req.body);
 
   try {
-    const result = await AuthUser.create(req.body);
+   const IsCurrentEmail = await AuthUser.findOne({ email: req.body.email    })
+    console.log(IsCurrentEmail);
+
+    if (IsCurrentEmail) {
+      res.redirect("/login"); 
+   return console.log("this email already exiset");
+     
+    }
+  
+   const result = await AuthUser.create(req.body);
     console.log(result);
     res.redirect("/");
   } catch (error) {
     console.log(error);
   }
+
+  
 });
 
 //"just verification"  check if email correct Or No
@@ -89,3 +100,8 @@ router.delete("/edit/:id", userController.user_delete);
 router.put("/edit/:id", userController.user_put);
 
 module.exports = router;
+
+
+
+
+
