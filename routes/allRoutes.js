@@ -5,7 +5,7 @@ const AuthUser = require("../models/authUser");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 var {requireAuth, checkIfUser} = require("../middleware/middleware");
-
+const { check, validationResult } = require("express-validator");
 
 
 
@@ -38,10 +38,32 @@ router.get("/signup", (req, res) => {
   res.render("auth/signup");
 });
 
-router.post("/signup", async (req, res) => {
-  console.log(req.body);
+router.post("/signup",
+  [
+   check("email", "Please provide a valid email").isEmail(),
+   check("password", "Password must be at least 8 characters with 1 upper case letter and 1 number").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/)
+],
+   
+  
+  
+  async (req, res) => {
+
 
   try {
+//  here we sure Or verify if email writed correcte or not correcte
+const objError  = validationResult(req);
+console.log(objError.errors);
+
+console.log("-----------------------------");
+// in case there are mistake Or error (sign ">" clear there are Elements this mean exist error)
+
+if (objError.errors.length > 0) {
+  res.redirect("/signup")
+return  console.log("Invalid Email OR invalid password");
+}
+
+
+
    const IsCurrentEmail = await AuthUser.findOne({ email: req.body.email    })
     console.log(IsCurrentEmail);
 
