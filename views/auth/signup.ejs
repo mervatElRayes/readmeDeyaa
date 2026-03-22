@@ -42,6 +42,15 @@
       .cover-container {
         max-width: 42em;
       }
+
+        #passwordError,
+        #emailError{
+          color: #ff5d79;
+          margin-left: 0.4rem;
+          font-weight: 600;
+        }
+
+
     </style>
   </head>
 
@@ -62,11 +71,12 @@ id="signupForm"
   <div class="mb-3">
     <label for="exampleInputEmail1" class="form-label">Email address</label>
     <input name="email" type="text" class="form-control" id="exampleInputEmail1">
-   
+   <p id="emailError"> </p>
   </div>
   <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Password</label>
     <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+  <p id="passwordError"></p>
   </div>
   <div class="mb-3 form-check">
     <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -84,8 +94,15 @@ id="signupForm"
     </div>
 
     <script>
+
+
+
+
+
       signupForm.addEventListener("submit", async (e) =>{
         e.preventDefault();
+        passwordError.textContent = ""
+        emailError.textContent = ""
 
         const res = await fetch("/signup", {
         method: "POST",
@@ -95,6 +112,17 @@ id="signupForm"
       const data = await res.json();
         if (data.arrValidationError) {
           console.log(data.arrValidationError);
+
+          data.arrValidationError.forEach(item => {
+            if (item.path == "email") {
+              emailError.textContent = "Please Provide a valid Email"
+            }
+
+                if (item.path == "password") {
+              passwordError.textContent = "Password must be at least 8 characters with 1 upper case letter and 1 number"
+            }
+
+          });
         }
 
         if (data.existEmail) {
