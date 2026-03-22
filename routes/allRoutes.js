@@ -48,7 +48,7 @@ router.post("/signup",
   
   async (req, res) => {
 
-
+console.log(req.body);
   try {
 //  here we sure Or verify if email writed correcte or not correcte
 const objError  = validationResult(req);
@@ -58,8 +58,8 @@ console.log("-----------------------------");
 // in case there are mistake Or error (sign ">" clear there are Elements this mean exist error)
 
 if (objError.errors.length > 0) {
-  res.redirect("/signup")
-return  console.log("Invalid Email OR invalid password");
+  // res.redirect("/signup")
+return  res.json({ arrValidationError: objError.errors });  
 }
 
 
@@ -68,13 +68,17 @@ return  console.log("Invalid Email OR invalid password");
     console.log(IsCurrentEmail);
 
     if (IsCurrentEmail) {
-      res.redirect("/login"); 
-   return console.log("this email already exiset");
+    return res.json({existEmail: "this email already exiset"})
+   
      
     }
   
-   const result = await AuthUser.create(req.body);
-    console.log(result);
+   const newUser = await AuthUser.create(req.body);
+
+     var token = jwt.sign({ id: newUser._id }, "c4a.dev");
+      res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
+      res.json({id: newUser._id})
+  
     res.redirect("/");
   } catch (error) {
     console.log(error);

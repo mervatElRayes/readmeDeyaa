@@ -11,7 +11,7 @@ var methodOverride = require("method-override");
 app.use(methodOverride("_method"));
 const allRoutes = require("./routes/allRoutes");
 const addUserRoute = require("./routes/addUser");
-
+app.use(express.json())
 // codes cookie-parser .. that get cookies from my website
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
