@@ -2,8 +2,7 @@ var jwt = require("jsonwebtoken");
 const AuthUser = require("../models/authUser")
 
 const requireAuth = (req, res, next) => {
-  console.log("before run the function");
-  console.log(req.cookies.jwt);
+ 
   const token = req.cookies.jwt;
   if (token) {
     jwt.verify(token, "c4a.dev", (err) => {

@@ -25,7 +25,7 @@ res.redirect("/")
 
 
 router.get("/", (req, res) => {
-  console.log("hiiiiiiiiiiiiiiii");
+ 
   res.render("welcome");
 });
 
@@ -48,13 +48,11 @@ router.post("/signup",
   
   async (req, res) => {
 
-console.log(req.body);
+
   try {
 //  here we sure Or verify if email writed correcte or not correcte
 const objError  = validationResult(req);
-console.log(objError.errors);
 
-console.log("-----------------------------");
 // in case there are mistake Or error (sign ">" clear there are Elements this mean exist error)
 
 if (objError.errors.length > 0) {
@@ -62,24 +60,21 @@ if (objError.errors.length > 0) {
 return  res.json({ arrValidationError: objError.errors });  
 }
 
-
+// this codes👇 check is Email Already Exist In DB ==>> and go to logIn 
 
    const IsCurrentEmail = await AuthUser.findOne({ email: req.body.email    })
-    console.log(IsCurrentEmail);
 
     if (IsCurrentEmail) {
-    return res.json({existEmail: "this email already exiset"})
-   
-     
+    return res.json({existEmail: "this email already existing"}) 
     }
-  
+  // these codes 👇 Create new user and than  logIn
    const newUser = await AuthUser.create(req.body);
 
      var token = jwt.sign({ id: newUser._id }, "c4a.dev");
       res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
       res.json({id: newUser._id})
   
-    res.redirect("/");
+    // res.redirect("/");
   } catch (error) {
     console.log(error);
   }
