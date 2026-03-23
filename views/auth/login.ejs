@@ -42,6 +42,15 @@
       .cover-container {
         max-width: 42em;
       }
+
+
+
+        #passwordError,
+        #emailError{
+          color: #ff5d79;
+          margin-left: 0.4rem;
+          font-weight: 600;
+        }
     </style>
   </head>
 
@@ -50,15 +59,16 @@
    <%- include('./header.ejs' , {currentPage: "login"}) %>
       <h1>log in</h1>
 
-<form id="logInForm" action="/login" method="post" class="text-start mx-auto mt-5" style="max-width: 22em;">
+<form id="logInForm" class="text-start mx-auto mt-5" style="max-width: 22em;">
   <div class="mb-3">
     <label for="exampleInputEmail1" class="form-label">Email address</label>
     <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" >
-   
+   <p id="emailError"></p>
   </div>
   <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Password</label>
     <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+  <p id="passwordError"></p>
   </div>
   <div class="mb-3 form-check">
     <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -74,12 +84,46 @@
         <p>Designed and developed by Mervat Mohamed @2026</p>
       </footer>
     </div>
-<script>
 
 
-</script>
+    <script>
 
 
+
+
+
+      logInForm.addEventListener("submit", async (e) =>{
+        e.preventDefault();
+        passwordError.textContent = ""
+        emailError.textContent = ""
+       
+
+        const res = await fetch("/login", {
+        method: "POST",
+        body: JSON.stringify({ 
+          
+          email: exampleInputEmail1.value,
+          password: exampleInputPassword1.value 
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      console.log(data);
+
+      if (data.notFoundEmail) {
+        emailError.textContent = data.notFoundEmail
+      }
+       
+      if (data.id) {
+        location.assign("/")
+      }
+       
+      if (data.passwordError) {
+        passwordError.textContent = data.passwordError
+      }
+   
+      });
+    </script>
 
 
 

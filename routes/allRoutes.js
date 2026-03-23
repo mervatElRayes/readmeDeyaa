@@ -82,25 +82,31 @@ return  res.json({ arrValidationError: objError.errors });
   
 });
 
-//"just verification"  check if email correct Or No
+//"just verification"  check if email correct Or No  lesson 16👇
 router.post("/login", async (req, res) => {
-  console.log("88888888888888888");
+ 
   const logInUser = await AuthUser.findOne({ email: req.body.email });
-  console.log(logInUser);
-
+  try {
+    
   if (logInUser === null) {
-    console.log("This email not Found In DB");
+    res.json({notFoundEmail: "Email not Found" })
+    
   } else {
     const match = await bcrypt.compare(req.body.password, logInUser.password);
     if (match) {
-      console.log("correct Email & Password");
+     
       var token = jwt.sign({ id: logInUser._id }, "c4a.dev");
+
       res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
-      res.redirect("/home");
+      res.json({id: logInUser._id})
     } else {
-      console.log("wrong password");
+     res.json({passwordError: `InCorrect Password for ${req.body.email}   `})
     }
   }
+  } catch (error) {
+    console.log(error);
+  }
+
 });
 
 // Level 1
