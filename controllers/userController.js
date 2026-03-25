@@ -37,7 +37,7 @@ const user_view_get = (req, res) => {
 };
 
 const user_search_post = (req, res) => {
-  console.log("*******************************");
+ 
 
   const searchText = req.body.searchText.trim();
 
