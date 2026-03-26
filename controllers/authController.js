@@ -53,7 +53,7 @@ return  res.json({ arrValidationError: objError.errors });
   // these codes 👇 Create new user and than  logIn
    const newUser = await AuthUser.create(req.body);
 
-     var token = jwt.sign({ id: newUser._id }, "c4a.dev");
+     var token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY);
       res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
       res.json({id: newUser._id})
   
@@ -79,7 +79,7 @@ const post_login = async (req, res) => {
     const match = await bcrypt.compare(req.body.password, logInUser.password);
     if (match) {
      
-      var token = jwt.sign({ id: logInUser._id }, "c4a.dev");
+      var token = jwt.sign({ id: logInUser._id }, process.env.JWT_SECRET_KEY);
 
       res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
       res.json({id: logInUser._id})

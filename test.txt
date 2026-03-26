@@ -1,4 +1,6 @@
-  model.create() ==> to send data to DB
+ This Project run BY 👉👉👉  npm run watch
+****************************************************************************
+model.create() ==> to send data to DB
   
   model.find() ==> to get all data from DB
   model.findById("64c084e1ba1c09af7a125c58)
@@ -37,3 +39,6 @@ model.findOne({email: ddddddddd})
     __v: 0
   }
 ]
+
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
